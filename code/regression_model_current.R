@@ -38,7 +38,8 @@ data %>%
   mutate(remaining.catch = catch.total - catch.7day, 
          pct.previous.yr = lag(catch.7day, k = 1)/ lag(catch.total, k =1)) -> data2
 
-data2 %>% 
+data2 %>% #filter out current year since it's the one we're going to predict
+  filter(year > 1984 & year < 2018) %>%   # not sure why but current model doesn't use data prior to 1985
   select(remaining.catch, catch.7day, permits.7day, pct.previous.yr) -> data.reg
 
 
