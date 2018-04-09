@@ -28,3 +28,18 @@ theme_set(theme_bw(base_size=12,base_family='Times New Roman')+
             theme(panel.grid.major = element_blank(),
                   panel.grid.minor = element_blank()))
 
+# data -----
+# data is summarized from ALEX or OceanAK by managers and stored in an excel workbook.  
+# current data is taken from this workbook.  In the future hoepfully data can be pulled and summarized here *BABYSTEPS*
+data <- read.xlsx('data/Dungeness PROJECTED  harvest update_18-19_kjp.xls', sheetName = "Rinput")
+
+# data manipulation -----
+data %>% 
+  mutate(remaining.catch = catch.total - catch.7day, 
+         pct.previous.yr = lag(catch.7day, k = 1)/ lag(catch.total, k =1)) -> data2
+
+data2 %>% 
+  select(remaining.catch, catch.7day, permits.7day, pct.previous.yr) -> data.reg
+
+
+# linear regression ----
