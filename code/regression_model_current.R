@@ -40,7 +40,7 @@ data %>%
 
 data2 %>% #filter out current year since it's the one we're going to predict
   filter(year > 1984 & year < 2018) %>%   # not sure why but current model doesn't use data prior to 1985
-  select(remaining.catch, catch.7day, permits.7day, pct.previous.yr) -> data.reg
+  select(year, remaining.catch, catch.7day, permits.7day, pct.previous.yr, catch.total) -> data.reg
 
 
 # linear regression ----
@@ -49,13 +49,18 @@ plot(data.reg) # look at how data is related to each variable
 fit <- lm(remaining.catch ~ catch.7day + permits.7day + pct.previous.yr, data = data.reg)
 summary(fit)
 
+data.reg %>% 
+  mutate(pred.catch.total = (coefficients(fit)[1] + coefficients(fit)[2]*catch.7day +
+                               coefficients(fit)[3] * permits.7day + coefficients(fit)[4] * pct.previous.yr) +
+           catch.7day) -> data.pred
 
 # visualizations -----
 ggplot(data.reg, aes(remaining.catch, pct.previous.yr)) +
   geom_point() + geom_smooth(method = "lm")
 
 # total catch plot -----
-ggplot(data2, aes(year, catch.total)) +
+ggplot(data.pred, aes(year, catch.total)) +
   geom_point(color = "blue") +
   geom_line(color = "blue") +
-  scale_y_continuous(limits = c(0, 8000000)) 
+  scale_y_continuous(limits = c(0, 8000000)) +
+  geom_line(aes(year, pred.catch.total), color = "red")
