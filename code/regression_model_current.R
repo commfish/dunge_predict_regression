@@ -15,3 +15,16 @@
 #     2. Number of permits fished in the first 7 days of the current season
 #     3. The percentage - in the previous year (year-1) - of the first 7 days catch to the total season catch
 #
+
+# load ----
+library(tidyverse)
+library(xlsx)
+library(extrafont)
+options(scipen=9999) # remove scientific notation
+
+loadfonts(device="win")
+windowsFonts(Times=windowsFont("TT Times New Roman"))
+theme_set(theme_bw(base_size=12,base_family='Times New Roman')+ 
+            theme(panel.grid.major = element_blank(),
+                  panel.grid.minor = element_blank()))
+
