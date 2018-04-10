@@ -20,6 +20,7 @@
 library(tidyverse)
 library(xlsx)
 library(extrafont)
+library(MASS)
 options(scipen=9999) # remove scientific notation
 
 loadfonts(device="win")
@@ -48,7 +49,11 @@ data2 %>% #filter out current year since it's the one we're going to predict
 fit_all <- lm(remaining.catch ~ catch.7day + permits.7day + pct.previous.yr + season.length, 
               data = data.explore)
 summary(fit_all)
+## NOTE: permits.7day and season.length are NOT significant
 
 
 
 
+## Stepwise Regression -----
+step.all <- stepAIC(fit_all, direction = "both")
+# NOTE: final model chosen is: Final Model: remaining.catch ~ catch.7day + pct.previous.yr
