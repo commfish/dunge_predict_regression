@@ -52,8 +52,34 @@ summary(fit_all)
 ## NOTE: permits.7day and season.length are NOT significant
 
 
-
-
 ## Stepwise Regression -----
 step.all <- stepAIC(fit_all, direction = "both")
 # NOTE: final model chosen is: Final Model: remaining.catch ~ catch.7day + pct.previous.yr
+
+## simplified model -----
+fit2 <- lm(remaining.catch ~ catch.7day + pct.previous.yr, 
+           data = data.explore)
+summary(fit2)
+
+data.explore %>% 
+  mutate(pred.catch2 = fitted(fit2) + catch.7day) -> data.explore
+
+ggplot(data.explore, aes(year, catch.total)) +
+  geom_point(color = "blue") +
+  geom_line(color = "blue") +
+  scale_y_continuous(limits = c(0, 8000000)) +
+  geom_line(aes(year, pred.catch2), color = "red")
+
+## Alternative simple model --------
+fit3 <- lm(remaining.catch ~ catch.7day + permits.7day, 
+           data = data.explore)
+summary(fit3)
+
+data.explore %>% 
+  mutate(pred.catch3 = fitted(fit3) + catch.7day) -> data.explore
+
+ggplot(data.explore, aes(year, catch.total)) +
+  geom_point(color = "blue") +
+  geom_line(color = "blue") +
+  scale_y_continuous(limits = c(0, 8000000)) +
+  geom_line(aes(year, pred.catch3), color = "red")
