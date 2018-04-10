@@ -41,7 +41,7 @@ data %>%
 
 data2 %>% #filter out current year since it's the one we're going to predict
   filter(year > 1984 & year < 2018) %>%   # not sure why but current model doesn't use data prior to 1985
-  select(-comments) -> data.explore
+  dplyr::select(-comments) -> data.explore
 
 # Should season length be included?  NO
 # Evaluate model choice --- NEEDS TO BE DONE
