@@ -16,5 +16,39 @@
 #     3. The percentage - in the previous year (year-1) - of the first 7 days catch to the total season catch
 #
 
+# load ----
+library(tidyverse)
+library(xlsx)
+library(extrafont)
+options(scipen=9999) # remove scientific notation
+
+loadfonts(device="win")
+windowsFonts(Times=windowsFont("TT Times New Roman"))
+theme_set(theme_bw(base_size=12,base_family='Times New Roman')+ 
+            theme(panel.grid.major = element_blank(),
+                  panel.grid.minor = element_blank()))
+
+# data -----
+# data is summarized from ALEX or OceanAK by managers and stored in an excel workbook.  
+# current data is taken from this workbook.  In the future hoepfully data can be pulled and summarized here *BABYSTEPS*
+data <- read.xlsx('data/Dungeness PROJECTED  harvest update_18-19_kjp.xls', sheetName = "Rinput")
+
+# data manipulation -----
+data %>% 
+  mutate(remaining.catch = catch.total - catch.7day, 
+         pct.previous.yr = lag(catch.7day, k = 1)/ lag(catch.total, k =1)) -> data2
+
+data2 %>% #filter out current year since it's the one we're going to predict
+  filter(year > 1984 & year < 2018) %>%   # not sure why but current model doesn't use data prior to 1985
+  select(-comments) -> data.explore
+
 # Should season length be included?
+
+# Hierachicial models -----------
+fit_all <- lm(remaining.catch ~ catch.7day + permits.7day + pct.previous.yr + season.length, 
+              data = data.explore)
+summary(fit_all)
+
+
+
 
